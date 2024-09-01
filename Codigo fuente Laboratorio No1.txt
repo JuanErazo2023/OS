@@ -1,0 +1,98 @@
+// Definición de los pines para las luces
+const int luzVerde = 11;
+const int luzRoja = 12;
+const int luzAmarilla = 13;
+
+void setup() {
+  // Configuración de los pines como salida
+  pinMode(luzVerde, OUTPUT);
+  pinMode(luzRoja, OUTPUT);
+  pinMode(luzAmarilla, OUTPUT);
+  
+  // Inicializar el Monitor Serial
+  Serial.begin(9600);
+  Serial.println("Control de luces. Ingrese un número entre 1 y 9.");
+}
+
+void loop() {
+  // Verificar si hay datos disponibles en el Serial
+  if (Serial.available()) {
+    char opcion = Serial.read();
+
+    // Limpiar el Serial para evitar repeticiones
+    while (Serial.available() > 0) {
+      Serial.read();
+    }
+
+    switch (opcion) {
+      case '1':
+        controlarLuz(luzVerde, HIGH, "verde", "encendida");
+        break;
+      case '2':
+        controlarLuz(luzVerde, LOW, "verde", "apagada");
+        break;
+      case '3':
+        controlarLuz(luzRoja, HIGH, "roja", "encendida");
+        break;
+      case '4':
+        controlarLuz(luzRoja, LOW, "roja", "apagada");
+        break;
+      case '5':
+        controlarLuz(luzAmarilla, HIGH, "amarilla", "encendida");
+        break;
+      case '6':
+        controlarLuz(luzAmarilla, LOW, "amarilla", "apagada");
+        break;
+      case '7':
+        encenderTodas();
+        break;
+      case '8':
+        apagarTodas();
+        break;
+      case '9':
+        modoIntermitente();
+        break;
+      default:
+        Serial.println("Opción no válida. Ingrese un número entre 1 y 9.");
+        break;
+    }
+  }
+}
+
+// Función para controlar encendido y apagado de una luz específica
+void controlarLuz(int pinLuz, int estado, const char* color, const char* accion) {
+  digitalWrite(pinLuz, estado);
+  Serial.print("Luz ");
+  Serial.print(color);
+  Serial.print(" ");
+  Serial.println(accion);
+}
+
+// Función para encender todas las luces
+void encenderTodas() {
+  digitalWrite(luzVerde, HIGH);
+  digitalWrite(luzRoja, HIGH);
+  digitalWrite(luzAmarilla, HIGH);
+  Serial.println("Todas las luces encendidas.");
+}
+
+// Función para apagar todas las luces
+void apagarTodas() {
+  digitalWrite(luzVerde, LOW);
+  digitalWrite(luzRoja, LOW);
+  digitalWrite(luzAmarilla, LOW);
+  Serial.println("Todas las luces apagadas.");
+}
+
+// Función para modo intermitente
+void modoIntermitente() {
+  Serial.println("Modo intermitente activado.");
+  for (int i = 0; i < 10; i++) { 
+    encenderTodas();
+    delay(500); 
+    apagarTodas();
+    delay(500); 
+  }
+  Serial.println("Modo intermitente finalizado.");
+}
+
